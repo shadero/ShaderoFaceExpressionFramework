@@ -1,0 +1,16 @@
+{
+  "name": "com.shadero.face-expression-framework",
+  "displayName": "Shadero Face Expression Framework",
+  "version": "0.1.0",
+  "unity": "2022.3",
+  "description": "Editor tools for building reusable face-tracking and expression Animator controllers for VRChat avatars.",
+  "author": {
+    "name": "shadero",
+    "url": "https://github.com/shadero"
+  },
+  "vpmDependencies": {
+    "com.vrchat.avatars": "3.10.5",
+    "dev.hai-vr.animator-as-code.v1": "1.2.0",
+    "dev.hai-vr.animator-as-code.v1.vrchat": "1.1.2"
+  }
+}

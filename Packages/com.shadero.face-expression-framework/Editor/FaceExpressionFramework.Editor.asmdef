@@ -1,0 +1,14 @@
+{
+  "name": "FaceExpressionFramework.Editor",
+  "rootNamespace": "FaceExpressionFramework.Editor",
+  "references": [
+    "AnimatorAsCode.V1",
+    "AnimatorAsCode.V1.VRChat",
+    "VRC.SDK3A",
+    "VRC.SDKBase"
+  ],
+  "includePlatforms": [
+    "Editor"
+  ],
+  "autoReferenced": true
+}

@@ -62,3 +62,8 @@ crashlytics-build.properties
 Assets/PackageMakerWindowData.asset*
 .idea
 .vscode
+
+# Local avatar fixtures
+/Assets/LocalAvatars/
+/Assets/LocalAvatars.meta
+/[Uu]ser[Ss]ettings/
