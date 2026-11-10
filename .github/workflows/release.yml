@@ -1,7 +1,9 @@
 name: Build Release
 
-on: 
-  workflow_dispatch:
+on:
+  push:
+    tags:
+      - 'v*'
 
 jobs:
 
@@ -19,11 +21,12 @@ jobs:
         if [ "${{ vars.PACKAGE_NAME }}" != "" ]; then
           echo "configPackage=true" >> $GITHUB_OUTPUT;
         else
-          echo "configPackage=false" >> $GITHUB_OUTPUT;
+          echo "::error::Set the PACKAGE_NAME repository variable before releasing."
+          exit 1
         fi
 
   # Build and release the Package
-  # If the repository is not configured properly, this job will be skipped
+  # Run only after package configuration has been validated
   build:
     needs: config
     runs-on: ubuntu-latest
@@ -46,12 +49,20 @@ jobs:
             file_path: "${{ env.packagePath }}/package.json"
             prop_path: "version"
     
+      - name: Validate Release Tag
+        env:
+          PACKAGE_VERSION: ${{ steps.version.outputs.value }}
+        run: |
+          if [[ -z "$PACKAGE_VERSION" || "$GITHUB_REF_NAME" != "v$PACKAGE_VERSION" ]]; then
+            echo "::error::Release tag must match v<version> from package.json."
+            exit 1
+          fi
+
       # Configure the Environment Variables needed for releasing the Package
       - name: Set Environment Variables
         run: |
           echo "zipFile=${{ vars.PACKAGE_NAME }}-${{ steps.version.outputs.value }}".zip >> $GITHUB_ENV
           echo "unityPackage=${{ vars.PACKAGE_NAME }}-${{ steps.version.outputs.value }}.unitypackage" >> $GITHUB_ENV
-          echo "version=${{ steps.version.outputs.value }}" >> $GITHUB_ENV
 
       # Zip the Package for release
       - name: Create Package Zip
@@ -69,13 +80,6 @@ jobs:
           package-path: ${{ env.unityPackage }}
           include-files: metaList
       
-      # Make a release tag of the version from the package.json file 
-      - name: Create Tag
-        id: tag_version
-        uses: rickstaa/action-create-tag@88dbf7ff6fe2405f8e8f6c6fdfd78829bc631f83
-        with:
-          tag: "${{ env.version }}"
-      
       # Publish the Release to GitHub
       - name: Make Release
         uses: softprops/action-gh-release@de2c0eb89ae2a093876385947365aca7b0e5f844
@@ -84,4 +88,4 @@ jobs:
             ${{ env.zipFile }}
             ${{ env.unityPackage }}
             ${{ env.packagePath }}/package.json
-          tag_name: ${{ env.version }}
+          tag_name: ${{ github.ref_name }}
